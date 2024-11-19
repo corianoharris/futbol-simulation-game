@@ -9,7 +9,7 @@ type GameEventsProps = {
     side: 'home' | 'away';
 };
 
-export const GameEvents: React.FC<GameEventsProps> = ({ state, side }) => (
+ const GameEvents: React.FC<GameEventsProps> = ({ state, side }) => (
     
     <motion.div
         className="bg-white rounded-xl shadow-lg overflow-hidden"
@@ -19,7 +19,7 @@ export const GameEvents: React.FC<GameEventsProps> = ({ state, side }) => (
         <div className="bg-gradient-to-r from-gray-800 to-gray-700 p-4">
             <h3 className="font-bold text-white flex items-center gap-2">
                 <Shield className="w-5 h-5" />
-                {side === 'home' ? 'WOL' : 'SOU'} Events
+                {side === 'home' ? 'FLBK' : 'DOM'} Events
             </h3>
         </div>
         <div className="p-4">
@@ -40,7 +40,7 @@ export const GameEvents: React.FC<GameEventsProps> = ({ state, side }) => (
                             <div>
                                 <div className="flex items-center gap-2">
                                     <span className="text-sm font-medium">{formatGameActionMinute(action.minute)}</span>
-                                    <span className="text-sm">{action.player}   {formatActionType(action.type.toLowerCase())}</span>
+                                    <span className="text-sm">{action.player}   {formatActionType((action.type ?? '').toLowerCase())}</span>
                                 </div>
                                 {action.subAction && (
                                         <span className="text-xs text-gray-500">({action.subAction})</span>
@@ -57,3 +57,5 @@ export const GameEvents: React.FC<GameEventsProps> = ({ state, side }) => (
             </div>
         </motion.div>
     );
+
+export default GameEvents;

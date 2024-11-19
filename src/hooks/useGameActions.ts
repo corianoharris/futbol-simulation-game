@@ -8,7 +8,7 @@ export const useGameActions = (
     const generateGameAction = useCallback(() => {
         const actionTypes = [
             'goal', 'yellow_card', 'red_card', 'penalty', 'corner', 'foul',
-            'substitution', 'injury', 'offside', 'save',
+            'substitution', 'injury', 'offside', 'save', 'possession_change',
             'shot_on_target', 'shot_off_target'
         ] as const;
 

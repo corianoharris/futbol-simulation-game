@@ -7,7 +7,7 @@ type ScoreDisplayProps = {
     state: GameState;
 };
 
-export const ScoreDisplay: React.FC<ScoreDisplayProps> = ({ state }) => (
+const ScoreDisplay: React.FC<ScoreDisplayProps> = ({ state }) => (
     <div className="relative grid grid-cols-3 gap-4 text-white">
         {/* Home Team */}
         <motion.div
@@ -20,7 +20,7 @@ export const ScoreDisplay: React.FC<ScoreDisplayProps> = ({ state }) => (
             <div className="bg-gradient-to-r from-amber-500 to-orange-600 p-2 rounded-lg mb-2">
                 <Shield className="w-8 h-8" />
             </div>
-            <span className="text-xl font-semibold">WOL</span>
+            <span className="text-xl font-semibold">FLBK</span>
             <span className="text-5xl font-bold mt-2">{state.homeScore}</span>
         </motion.div>
 
@@ -47,8 +47,10 @@ export const ScoreDisplay: React.FC<ScoreDisplayProps> = ({ state }) => (
             <div className="bg-gradient-to-r from-red-500 to-red-600 p-2 rounded-lg mb-2">
                 <Shield className="w-8 h-8" />
             </div>
-            <span className="text-xl font-semibold">SOU</span>
+            <span className="text-xl font-semibold">DOM</span>
             <span className="text-5xl font-bold mt-2">{state.awayScore}</span>
         </motion.div>
     </div>
 );
+
+export default ScoreDisplay;

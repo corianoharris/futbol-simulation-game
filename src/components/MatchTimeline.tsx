@@ -7,7 +7,7 @@ type MatchTimelineProps = {
     state: GameState;
 };
 
-export const MatchTimeline: React.FC<MatchTimelineProps> = ({ state }) => (
+const MatchTimeline: React.FC<MatchTimelineProps> = ({ state }) => (
     <motion.div
         className="bg-white rounded-xl p-6 shadow-lg"
         initial={{ opacity: 0, y: 20 }}
@@ -47,3 +47,5 @@ export const MatchTimeline: React.FC<MatchTimelineProps> = ({ state }) => (
         </div>
     </motion.div>
 );
+
+export default MatchTimeline;
