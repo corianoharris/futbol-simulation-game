@@ -1,5 +1,5 @@
 export type GameActionType = 'goal' | 'yellow_card' | 'red_card' | 'penalty' |
-    'corner' | 'foul' | 'substitution' | 'injury' | 'offside' | 'save' | 'shot_on_target' | 'shot_off_target';
+    'corner' | 'foul' | 'substitution' | 'injury' | 'offside' | 'save' | 'possession_change' | 'shot_on_target' | 'shot_off_target';
 
 export type GameAction = {
     id: string;

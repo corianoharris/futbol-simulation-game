@@ -26,7 +26,7 @@ type GameModalsProps = {
                         <div className="text-center">
                             <h2 className="text-3xl font-bold mb-4">Halftime</h2>
                             <div className="text-2xl mb-6">
-                                WOL {state.homeScore} - {state.awayScore} SOU
+                                FLBK {state.homeScore} - {state.awayScore} DOM
                             </div>
                             <motion.div
                                 className="text-black"
@@ -64,15 +64,15 @@ type GameModalsProps = {
                             </motion.div>
                             <h2 className="text-3xl font-bold mb-4">Full Time</h2>
                             <div className="text-2xl mb-6">
-                                WOL {state.homeScore} - {state.awayScore} SOU
+                                FLBK {state.homeScore} - {state.awayScore} DOM
                             </div>
                             <motion.div
                                 className="text-xl font-semibold"
                                 animate={{ scale: [1, 1.1, 1] }}
                                 transition={{ duration: 1, repeat: Infinity }}
                             >
-                                {state.homeScore > state.awayScore ? 'Wolves Win!' :
-                                    state.awayScore > state.homeScore ? 'Southampton Win!' :
+                                {state.homeScore > state.awayScore ? 'Fallbook Warriors win!' :
+                                    state.awayScore > state.homeScore ? 'Dominician of California Penguins win!' :
                                         'It\'s a Draw!'}
                             </motion.div>
 
@@ -82,7 +82,7 @@ type GameModalsProps = {
                                 <div className="space-y-2">
                                     <div className="flex justify-between">
                                         <span>Possession</span>
-                                        <span>WOL {Math.floor(state.possessionHome)}% - {100 - Math.floor(state.possessionHome)}% SOU</span>
+                                        <span>FLBK {Math.floor(state.possessionHome)}% - {100 - Math.floor(state.possessionHome)}% DOM</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span>Shots</span>

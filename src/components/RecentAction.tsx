@@ -7,7 +7,7 @@ type RecentActionProps = {
     state: GameState;
 };
 
-export const RecentAction: React.FC<RecentActionProps> = ({ state }) => (
+const RecentAction: React.FC<RecentActionProps> = ({ state }) => (
     <AnimatePresence>
         {state.recentAction && (
             <motion.div
@@ -37,3 +37,5 @@ export const RecentAction: React.FC<RecentActionProps> = ({ state }) => (
         )}
     </AnimatePresence>
 );
+
+export default RecentAction;

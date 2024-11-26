@@ -5,10 +5,10 @@ import { ShieldAlert } from 'lucide-react';
 import { initializeMirageServer } from '../server/mirage';
 import { gameReducer, initialState } from '@/store/GameReducer';
 import { useGameActions } from '../hooks/useGameActions';
-import { ScoreDisplay } from './ScoreDisplay';
-import { GameEvents } from './GameEvents';
-import { MatchTimeline } from './MatchTimeline';
-import { RecentAction } from './RecentAction';
+import ScoreDisplay from '@/components/ScoreDisplay';
+import GameEvents from '@/components/GameEvents';
+import MatchTimeline  from '@/components/MatchTimeline';
+import RecentAction  from '@/components/RecentAction';
 
 // Lazy load GameModals
 const GameModals = React.lazy(() => import('./GameModals'));

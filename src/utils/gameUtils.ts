@@ -3,7 +3,7 @@ import { GameActionType } from '../types/game';
 export const getActionEmoji = (type: GameActionType) =>
 {
     const emojiMap = {
-        goal: '⚽',
+        goal: '🤸',
         yellow_card: '🟨',
         red_card: '🟥',
         penalty: '🎯',
@@ -12,7 +12,7 @@ export const getActionEmoji = (type: GameActionType) =>
         substitution: '🔄',
         injury: '🚑',
         offside: '🚫',
-        possession_change: '<->',
+        possession_change: '⚽',
         save: '🧤',
         shot_on_target: '🎯',
         shot_off_target: '↗️'
@@ -84,6 +84,6 @@ export const formatActionType = (type: string, subAction?: string) => {
         case 'shot_off_target':
             return 'shoots wide';
         default:
-            return type.toLowerCase().replace(/_/g, ' ');
+            return type.replace(/_/g, ' ');
     }
 };
