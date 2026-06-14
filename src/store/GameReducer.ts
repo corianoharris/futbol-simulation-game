@@ -13,7 +13,14 @@ export const initialState: GameState = {
     flashWinner: null,
     possessionHome: 50,
     recentAction: null,
-    addedTime: 0
+    addedTime: 0,
+    homePlayersCount: 11,
+    awayPlayersCount: 11,
+    playerYellowCards: {},
+    homeGoalkeeper: '',
+    awayGoalkeeper: '',
+    homeSubsUsed: 0,
+    awaySubsUsed: 0
 };
 
 export const gameReducer = (state: GameState, action: GameDispatchAction): GameState => {
@@ -37,7 +44,9 @@ export const gameReducer = (state: GameState, action: GameDispatchAction): GameS
         case 'SET_PLAYERS':
             return {
                 ...state,
-                players: action.payload
+                players: action.payload,
+                homeGoalkeeper: action.payload[0] ?? '',
+                awayGoalkeeper: action.payload[26] ?? '',
             };
         case 'SET_HALFTIME':
             return {
@@ -79,12 +88,45 @@ export const gameReducer = (state: GameState, action: GameDispatchAction): GameS
                 ...state,
                 showHalftimeModal: action.payload
             };
+        case 'UPDATE_PLAYER_COUNT':
+            return {
+                ...state,
+                homePlayersCount: action.payload.team === 'home'
+                    ? Math.max(7, state.homePlayersCount - 1)
+                    : state.homePlayersCount,
+                awayPlayersCount: action.payload.team === 'away'
+                    ? Math.max(7, state.awayPlayersCount - 1)
+                    : state.awayPlayersCount,
+            };
+        case 'SET_GOALKEEPER':
+            return {
+                ...state,
+                homeGoalkeeper: action.payload.team === 'home' ? action.payload.player : state.homeGoalkeeper,
+                awayGoalkeeper: action.payload.team === 'away' ? action.payload.player : state.awayGoalkeeper,
+            };
+        case 'UPDATE_SUBS_USED':
+            return {
+                ...state,
+                homeSubsUsed: action.payload.team === 'home' ? state.homeSubsUsed + 1 : state.homeSubsUsed,
+                awaySubsUsed: action.payload.team === 'away' ? state.awaySubsUsed + 1 : state.awaySubsUsed,
+            };
+        case 'UPDATE_YELLOW_CARDS':
+            return {
+                ...state,
+                playerYellowCards: {
+                    ...state.playerYellowCards,
+                    [action.payload.key]: action.payload.count,
+                },
+            };
         case 'RESET_GAME':
             return {
                 ...initialState,
                 players: state.players,
+                homeGoalkeeper: state.homeGoalkeeper,
+                awayGoalkeeper: state.awayGoalkeeper,
                 isPlaying: true
             };
+            // homeSubsUsed / awaySubsUsed intentionally reset to 0 via initialState spread
         default:
             return state;
     }

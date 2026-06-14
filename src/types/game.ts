@@ -25,13 +25,22 @@ export type GameState = {
     possessionHome: number;
     recentAction: GameAction | null;
     addedTime: number;
+    homePlayersCount: number;
+    awayPlayersCount: number;
+    playerYellowCards: Record<string, number>;
+    homeGoalkeeper: string;
+    awayGoalkeeper: string;
+    homeSubsUsed: number;
+    awaySubsUsed: number;
 };
 
 export type GameDispatchAction = {
     type: 'UPDATE_SCORE' | 'UPDATE_TIME' | 'ADD_ACTION' | 'SET_PLAYERS' |
     'SET_HALFTIME' | 'SET_GAME_OVER' | 'SET_FLASH_WINNER' |
     'UPDATE_POSSESSION' | 'SET_RECENT_ACTION' | 'UPDATE_ADDED_TIME' |
-    'RESET_GAME' | 'SET_PLAYING' | 'SET_HALFTIME_MODAL';
+    'RESET_GAME' | 'SET_PLAYING' | 'SET_HALFTIME_MODAL' |
+    'UPDATE_PLAYER_COUNT' | 'UPDATE_YELLOW_CARDS' |
+    'SET_GOALKEEPER' | 'UPDATE_SUBS_USED';
     // eslint-disable-next-line @typescript-eslint/no-explicit-any 
     payload?: any;
 };

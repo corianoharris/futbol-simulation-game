@@ -82,7 +82,7 @@ describe('SoccerScoreboard', () =>
             render(<SoccerScoreboard />);
         });
 
-        expect(screen.getByText('New Match')).toBeInTheDocument();
+        expect(screen.getByText(/Resume/i)).toBeInTheDocument();
         expect(mockScoreDisplay).toHaveBeenCalled();
         expect(mockGameEvents).toHaveBeenCalled();
         expect(mockMatchTimeline).toHaveBeenCalled();
@@ -105,54 +105,45 @@ describe('SoccerScoreboard', () =>
     });
 
     it('handles halftime correctly', async () => {
-        // 1. Setup and render
         const user = userEvent.setup({ delay: null });
-        
+
         await act(async () => {
             render(<SoccerScoreboard />);
         });
-    
-        // 2. Wait for initial data fetch
+
+        // Wait for players to load
         await waitFor(() => {
             const calls = mockScoreDisplay.mock.calls;
             expect(calls.length).toBeGreaterThan(0);
             expect(calls[calls.length - 1][0].state.players).toHaveLength(2);
         });
-    
-        // 3. Start game
-        await user.click(screen.getByText('New Match'));
+
+        // Start game
+        await user.click(screen.getByText(/Resume/i));
         mockScoreDisplay.mockClear();
-    
-        // 4. Advance to halftime (22 ticks for 22 seconds)
-        for (let i = 0; i < 22; i++) {
-            act(() => {
-                jest.advanceTimersByTime(1000); // Advance one second at a time
-            });
+
+        // Advance 46 ticks: ticks 0-44 move gameTime from 0→45,
+        // tick 45 fires with currentTime=45 and triggers halftime
+        for (let i = 0; i < 46; i++) {
+            act(() => { jest.advanceTimersByTime(1000); });
         }
-    
-        // 5. Verify halftime state
+
+        // Halftime should now be active
+        await waitFor(() => {
+            const lastCall = mockScoreDisplay.mock.calls[mockScoreDisplay.mock.calls.length - 1][0];
+            expect(lastCall.state.isHalftime).toBe(true);
+            expect(lastCall.state.isPlaying).toBe(false);
+        });
+
+        // Advance through halftime delay (3000ms until second half starts)
+        act(() => { jest.advanceTimersByTime(3000); });
+
+        // Second half should have started at minute 46
         await waitFor(() => {
             const lastCall = mockScoreDisplay.mock.calls[mockScoreDisplay.mock.calls.length - 1][0];
             expect(lastCall.state.isHalftime).toBe(false);
             expect(lastCall.state.isPlaying).toBe(true);
-        });
-    
-        // 6. Advance through halftime modal (2.5 seconds)
-        act(() => {
-            jest.advanceTimersByTime(2500);
-        });
-    
-        // 7. Advance through the halftime resume delay (additional 0.5 seconds)
-        act(() => {
-            jest.advanceTimersByTime(2500);
-        });
-    
-        // 8. Verify game resumes at correct time
-        await waitFor(() => {
-            const lastCall = mockScoreDisplay.mock.calls[mockScoreDisplay.mock.calls.length - 1][0];
-            expect(lastCall.state.isHalftime).toBe(false);
-            expect(lastCall.state.isPlaying).toBe(true);
-            expect(lastCall.state.gameTime).toBe(45);
+            expect(lastCall.state.gameTime).toBe(46);
         });
     }, 30000);
     

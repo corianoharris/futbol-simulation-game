@@ -1,61 +1,61 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Shield } from 'lucide-react';
 import { GameState } from '../types/game';
-import { getActionEmoji, getActionClass, formatActionType, formatGameActionMinute } from '../utils/gameUtils';
+import { getActionEmoji, formatActionType, formatGameActionMinute } from '../utils/gameUtils';
 
 type GameEventsProps = {
     state: GameState;
     side: 'home' | 'away';
 };
 
- const GameEvents: React.FC<GameEventsProps> = ({ state, side }) => (
-    
-    <motion.div
-        className="bg-white rounded-xl shadow-lg overflow-hidden"
-        initial={{ x: side === 'home' ? -20 : 20, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-    >
-        <div className="bg-gradient-to-r from-gray-800 to-gray-700 p-4">
-            <h3 className="font-bold text-white flex items-center gap-2">
-                <Shield className="w-5 h-5" />
-                {side === 'home' ? 'FLBK' : 'DOM'} Events
-            </h3>
+const GameEvents: React.FC<GameEventsProps> = ({ state, side }) => {
+    const isHome = side === 'home';
+    const events = state.actions.filter(a => a.team === side).slice().reverse();
+
+    return (
+        <div className="space-y-1.5 max-h-48 overflow-y-auto">
+            {events.length === 0 && (
+                <p className="text-gray-700 text-[11px] text-center py-5 tracking-widest uppercase">
+                    No events yet
+                </p>
+            )}
+            {events.map((action) => (
+                <motion.div
+                    key={action.id}
+                    initial={{ opacity: 0, x: isHome ? -10 : 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className={`flex items-center gap-2 px-2.5 py-2 rounded-lg bg-white/[0.03] border border-white/[0.05] ${
+                        isHome ? '' : 'flex-row-reverse'
+                    }`}
+                >
+                    <span className="text-sm flex-shrink-0 leading-none">{getActionEmoji(action.type)}</span>
+
+                    <div className={`flex-1 min-w-0 ${isHome ? 'text-left' : 'text-right'}`}>
+                        <span className="text-white text-[11px] font-semibold truncate block leading-tight">
+                            {action.player}
+                        </span>
+                        <span className="text-gray-600 text-[10px] leading-tight">
+                            {formatActionType(action.type, action.subAction)}
+                            {action.replacementPlayer && (
+                                <span className="text-gray-700"> · {action.replacementPlayer}</span>
+                            )}
+                        </span>
+                    </div>
+
+                    <span
+                        className={`text-[10px] font-mono font-bold flex-shrink-0 px-1.5 py-0.5 rounded-md ${
+                            isHome
+                                ? 'bg-amber-500/10 text-amber-500/80'
+                                : 'bg-blue-500/10 text-blue-400/80'
+                        }`}
+                    >
+                        {formatGameActionMinute(action.minute)}
+                    </span>
+                </motion.div>
+            ))}
         </div>
-        <div className="p-4">
-            <div className="space-y-3 text-gray-900 max-h-64 overflow-y-auto">
-                {state.actions
-                    .filter(action => action.team === side)
-                    .reverse()
-                    .map((action) => (
-                        <motion.div
-                            key={action.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
-                        >
-                            <div className={`p-2 rounded-full ${getActionClass(action.type)}`}>
-                                {getActionEmoji(action.type)}
-                            </div>
-                            <div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm font-medium">{formatGameActionMinute(action.minute)}</span>
-                                    <span className="text-sm">{action.player}   {formatActionType((action.type ?? '').toLowerCase())}</span>
-                                </div>
-                                {action.subAction && (
-                                        <span className="text-xs text-gray-500">({action.subAction})</span>
-                                    )}
-                                    {action.replacementPlayer && (
-                                        <span className="text-xs text-gray-500">
-                                            → {action.replacementPlayer} enters
-                                        </span>
-                                    )}
-                                </div>
-                            </motion.div>
-                        ))}
-                </div>
-            </div>
-        </motion.div>
     );
+};
 
 export default GameEvents;

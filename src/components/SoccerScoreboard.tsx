@@ -1,7 +1,5 @@
 // src/components/SoccerScoreboard.tsx
 import React, { useReducer, useEffect, Suspense, useState } from 'react';
-import { motion } from 'framer-motion';
-import { ShieldAlert } from 'lucide-react';
 import { initializeMirageServer } from '../server/mirage';
 import { gameReducer, initialState } from '@/store/GameReducer';
 import { useGameActions } from '../hooks/useGameActions';
@@ -26,7 +24,8 @@ const SoccerScoreboard = () => {
     useEffect(() => {
         fetch("/api/players")
             .then((res) => res.json())
-            .then((data) => dispatch({ type: 'SET_PLAYERS', payload: data }));
+            .then((data) => dispatch({ type: 'SET_PLAYERS', payload: data }))
+            .catch(() => dispatch({ type: 'SET_PLAYERS', payload: [] }));
     }, []);
 
     // Game timer effect
@@ -37,7 +36,7 @@ const SoccerScoreboard = () => {
             interval = setInterval(() => {
                 const currentTime = state.gameTime;
                 
-                if (currentTime === Math.floor(0.5 * 44)) {
+                if (currentTime === 45) {
                     dispatch({ type: 'SET_HALFTIME', payload: true });
                     dispatch({ type: 'SET_PLAYING', payload: false });
                     dispatch({ type: 'UPDATE_TIME', payload: currentTime + 1 });
@@ -75,7 +74,7 @@ const SoccerScoreboard = () => {
             const gameTimer = setTimeout(() => {
                 dispatch({ type: 'SET_HALFTIME', payload: false });
                 dispatch({ type: 'SET_PLAYING', payload: true });
-                dispatch({ type: 'UPDATE_TIME', payload: 45 });
+                dispatch({ type: 'UPDATE_TIME', payload: 46 });
             }, 3000);
 
             return () => {
@@ -113,89 +112,110 @@ const SoccerScoreboard = () => {
         dispatch({ type: 'RESET_GAME' });
     };
 
+    const togglePause = () => {
+        dispatch({ type: 'SET_PLAYING', payload: !state.isPlaying });
+    };
+
     return (
-        <div className="w-full bg-gray-100 p-6">
-            <div className="w-full mx-auto space-y-6">
-                {/* Main Scoreboard */}
-                <motion.div
-                    className="relative overflow-hidden bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-xl p-8 shadow-xl"
-                    animate={{ scale: state.flashWinner ? [1, 1.02, 1] : 1 }}
-                    transition={{ duration: 0.5, repeat: state.flashWinner ? Infinity : 0 }}
-                >
-                    {/* Pattern Background */}
-                    <div className="absolute inset-0 opacity-10">
-                        <div
-                            className="absolute inset-0"
-                            style={{
-                                backgroundImage: `radial-gradient(circle at 25px 25px, white 2%, transparent 0%), 
-                                 radial-gradient(circle at 75px 75px, white 2%, transparent 0%)`,
-                                backgroundSize: '100px 100px'
-                            }}
-                        />
-                    </div>
+        <div className="w-full space-y-3">
 
-                    {/* Score Display */}
+            {/* ── Main scoreboard card ── */}
+            <div
+                className="rounded-2xl overflow-hidden border"
+                style={{
+                    background: 'linear-gradient(160deg, #0d1117 0%, #111827 100%)',
+                    borderColor: 'rgba(255,255,255,0.07)',
+                    boxShadow: '0 32px 80px rgba(0,0,0,0.6)',
+                }}
+            >
+                <div className="px-6 py-8">
                     <ScoreDisplay state={state} />
+                </div>
+            </div>
 
-                    {/* Possession Bar */}
-                    <div className="w-full mt-4">
-                        <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
-                            <motion.div
-                                className="h-full bg-gradient-to-r from-blue-500 to-blue-400"
-                                animate={{ width: `${state.possessionHome}%` }}
-                                transition={{ duration: 0.5 }}
-                            />
-                        </div>
-                        <div className="flex justify-between text-sm mt-1 text-white">
-                            <span>{Math.round(state.possessionHome)}%</span>
-                            <span>{Math.round(100 - state.possessionHome)}%</span>
-                        </div>
+            {/* ── Recent action ── */}
+            <RecentAction state={state} />
+
+            {/* ── Events columns ── */}
+            <div className="grid grid-cols-2 gap-3">
+                <div
+                    className="rounded-2xl overflow-hidden border"
+                    style={{ background: '#0d1117', borderColor: 'rgba(255,255,255,0.07)' }}
+                >
+                    <div
+                        className="flex items-center gap-2 px-4 py-2.5 border-b"
+                        style={{ borderColor: 'rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)' }}
+                    >
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
+                        <span className="text-[10px] tracking-[0.2em] text-gray-600 uppercase font-medium">FLBK Events</span>
                     </div>
-                </motion.div>
-
-                {/* Match Events */}
-                <div className="grid grid-cols-2 gap-6">
-                    <GameEvents state={state} side="home" />
-                    <GameEvents state={state} side="away" />
+                    <div className="p-3">
+                        <GameEvents state={state} side="home" />
+                    </div>
                 </div>
 
-                {/* Match Timeline */}
-                <MatchTimeline state={state} />
-
-                {/* Control Button */}
-                <motion.div
-                    className="flex justify-center"
-                    whileHover={{ scale: 1.05 }}
+                <div
+                    className="rounded-2xl overflow-hidden border"
+                    style={{ background: '#0d1117', borderColor: 'rgba(255,255,255,0.07)' }}
                 >
+                    <div
+                        className="flex items-center justify-end gap-2 px-4 py-2.5 border-b"
+                        style={{ borderColor: 'rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)' }}
+                    >
+                        <span className="text-[10px] tracking-[0.2em] text-gray-600 uppercase font-medium">DOM Events</span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
+                    </div>
+                    <div className="p-3">
+                        <GameEvents state={state} side="away" />
+                    </div>
+                </div>
+            </div>
+
+            {/* ── Timeline ── */}
+            <div
+                className="rounded-2xl border px-5 py-4"
+                style={{ background: '#0d1117', borderColor: 'rgba(255,255,255,0.07)' }}
+            >
+                <div className="text-[10px] tracking-[0.25em] text-gray-600 uppercase font-medium mb-3">
+                    Match Progress
+                </div>
+                <MatchTimeline state={state} />
+            </div>
+
+            {/* ── Controls ── */}
+            <div className="flex justify-center pt-1">
+                {state.isGameOver ? (
                     <button
                         onClick={restart}
-                        className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 
-                            hover:to-blue-600 text-white font-bold py-3 px-6 rounded-full 
-                            shadow-lg flex items-center gap-2 transition-all duration-200"
+                        className="text-gray-400 hover:text-white text-xs font-semibold py-2.5 px-6 rounded-full
+                            border transition-all duration-200 tracking-widest uppercase"
+                        style={{ borderColor: 'rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.04)' }}
+                        onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)')}
+                        onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)')}
                     >
-                        <ShieldAlert className="w-5 h-5" />
-                        New Match
+                        ⚽ New Match
                     </button>
-                </motion.div>
-
-                {/* Game Modals */}
-                <Suspense 
-                    fallback={
-                        <div className="fixed inset-0 bg-black/30 flex items-center justify-center">
-                            <div className="bg-white p-4 rounded-lg shadow-lg">
-                                Loading...
-                            </div>
-                        </div>
-                    }
-                >
-                    {(state.showHalftimeModal || (state.isGameOver && showGameOverModal)) && (
-                        <GameModals state={state} />
-                    )}
-                </Suspense>
-
-                {/* Recent Action */}
-                <RecentAction state={state} />
+                ) : !state.isHalftime && (
+                    <button
+                        onClick={togglePause}
+                        className="text-gray-400 hover:text-white text-xs font-semibold py-2.5 px-6 rounded-full
+                            border transition-all duration-200 tracking-widest uppercase"
+                        style={{ borderColor: 'rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.04)' }}
+                        onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)')}
+                        onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)')}
+                    >
+                        {state.isPlaying ? '⏸ Pause' : '▶ Resume'}
+                    </button>
+                )}
             </div>
+
+            {/* ── Modals ── */}
+            <Suspense fallback={null}>
+                {(state.showHalftimeModal || (state.isGameOver && showGameOverModal)) && (
+                    <GameModals state={state} />
+                )}
+            </Suspense>
+
         </div>
     );
 };

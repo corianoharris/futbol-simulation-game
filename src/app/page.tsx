@@ -2,13 +2,15 @@
 
 import SoccerScoreboard from "@/components/SoccerScoreboard";
 
-export default function Home()
-{
+export default function Home() {
   return (
-    <div className="grid items-center justify-items-center pt-10 gap-2 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex w-6/12 flex-col gap-8 row-start-2 items-center sm:items-start">
+    <div
+      className="min-h-screen flex items-start justify-center py-10 px-4"
+      style={{ background: 'radial-gradient(ellipse at 50% 0%, #0f172a 0%, #080c14 60%, #030508 100%)' }}
+    >
+      <div className="w-full max-w-2xl">
         <SoccerScoreboard />
-      </main>
+      </div>
     </div>
   );
 }
